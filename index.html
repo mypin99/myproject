@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Solar Plant Control Interface</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f2f2f2;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+
+    .container {
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    h1 {
+      color: #333;
+    }
+
+    .button-container {
+      display: flex;
+      justify-content: center;
+      margin-bottom: 20px;
+    }
+
+    .button-off, .button-on {
+      padding: 10px 20px;
+      font-size: 16px;
+      border: none;
+      border-radius: 5px;
+      color: white;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+
+    .button-off {
+      background-color: #FF5733; 
+      margin-right: 10px; 
+    }
+
+    .button-off:hover {
+      background-color: #FF6E4A; 
+    }
+
+    .button-on {
+      background-color: #4CAF50; 
+    }
+
+    .button-on:hover {
+      background-color: #45a049; 
+    }
+
+    .bulb {
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      background-color: grey;
+    }
+
+    .bulb.on {
+      background-color: yellow;
+      box-shadow: 0 0 20px yellow, inset 0 0 20px yellow;
+    }
+
+    .bulb.off {
+      background-color: grey;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Solar Plant Control Interface</h1>
+    <div class="button-container">
+      <button class="button-off" onclick="sendCommand(0)">Turn Off</button>
+      <button class="button-on" onclick="sendCommand(1)">Turn On</button>
+    </div>
+    <div class="bulb off"></div>
+  </div>
+
+  <script>
+    function sendCommand(value) {
+      var xhr = new XMLHttpRequest();
+      var url = "https://api.thingspeak.com/update?api_key=DVMZQTC37CXFSKL7&field1=" + value;
+      xhr.open("POST", url);
+      xhr.send();
+      xhr.onreadystatechange = function () {
+        if (xhr.readyState === 4 && xhr.status === 200) {
+          console.log("Command sent successfully!");
+          updateBulb(value);
+        }
+      };
+    }
+
+    function updateBulb(value) {
+      var bulb = document.querySelector('.bulb');
+      if (value === 1) {
+        bulb.classList.remove('off');
+        bulb.classList.add('on');
+      } else {
+        bulb.classList.remove('on');
+        bulb.classList.add('off');
+      }
+    }
+  </script>
+</body>
+</html>
